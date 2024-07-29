@@ -14,7 +14,7 @@
                 <asp:Label CssClass="form-label" runat="server" Text="Password" ID="lblPassword"></asp:Label>
                 <asp:TextBox runat="server" ID="txtPassword" CssClass="form-control" TextMode="Password"></asp:TextBox>
             </div>
-            <asp:Button runat="server" Text="Ingresar" CssClass="btn btn-primary" ID="btnIngresar"  /> <%-- falta OnClick="btnIngresar_Click"--%>
+            <asp:Button runat="server" Text="Ingresar" CssClass="btn btn-primary" ID="btnIngresar" OnClick="btnIngresar_Click" />
             <a href="/">Cancelar</a>
         </div>
     </div>

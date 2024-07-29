@@ -42,7 +42,7 @@
                     <% }
                         else
                         { %>
-                    <%--<asp:Button ID="btnSalir" runat="server" Text="Salir" CssClass="btn btn-outline-primary me-2" OnClick="btnSalir_Click" />--%>
+                    <asp:Button ID="btnSalir" runat="server" Text="Salir" CssClass="btn btn-outline-primary me-2" OnClick="btnSalir_Click" />
                     <%} %>
                     <asp:Label ID="lblUser" runat="server" Text="" CssClass="form-label me-2"></asp:Label>
                     <asp:Image ID="imgAvatar" Style="height: 40px; width: 40px; border-radius: 50%;"

@@ -13,20 +13,26 @@ namespace Negocio
     {
         toolsDB toolDB = new toolsDB();
 
-        public string consultaLectura = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A left join CATEGORIAS C ON A.IdCategoria = C.Id left join MARCAS M ON A.IdMarca = M.Id where not Codigo like '% /oculto\\'";
+        public string consultaLectura = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A left join CATEGORIAS C ON A.IdCategoria = C.Id left join MARCAS M ON A.IdMarca = M.Id where not Codigo like '% /oculto\\' ";
         public List<Articulo> lista_articulos;
 
-        public List<Articulo> listar(string consulta)
+        public List<Articulo> listar(string id = "")
 
         //Retorna una lista de articulos consultada en la base de datos 
         {
             lista_articulos = new List<Articulo>();
             AccesoDatos datos = new AccesoDatos();
+            string consulta;
 
-            if (consulta == "Default")
-                consulta = consultaLectura;
             try
             {
+                if (id != "")
+                {
+                    consulta = consultaLectura + "And A.id = @id";
+                    datos.setearParametro("@id", id);
+                }
+                else
+                    consulta = consultaLectura;
                 datos.setearConsulta(consulta);
                 datos.ejecutarLectura();
                 while (datos.Lector.Read())

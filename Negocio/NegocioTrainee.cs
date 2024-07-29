@@ -15,12 +15,11 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("update users set imagenPerfil = @imagen, nombre = @nombre, apellido = @apellido, fechaNacimiento = @fecha where id = @id");
+                datos.setearConsulta("update users set urlimagenPerfil = @imagen, nombre = @nombre, apellido = @apellido where id = @id");
                 //datos.setearParametro("@imagen", user.ImagenPerfil != null ? user.ImagenPerfil : (object)DBNull.Value);
                 datos.setearParametro("@imagen", (object)user.ImagenPerfil ?? DBNull.Value);
                 datos.setearParametro("@nombre", user.Nombre);
                 datos.setearParametro("@apellido", user.Apellido);
-                datos.setearParametro("@fecha", (object)user.FechaNacimiento ?? DBNull.Value);
                 datos.setearParametro("@id", user.Id);
                 datos.ejecutarAccion();
 
@@ -41,15 +40,16 @@ namespace Negocio
         //pass
         //admin false
 
-        public int insertarNuevo(Trainee nuevo)
+        public void insertarNuevo(Trainee nuevo)
         {
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.setearProcedimiento("insertarNuevo");
+                string consulta = "Insert into USERS(email, pass) values (@email, @pass)";
+                datos.setearConsulta(consulta);
                 datos.setearParametro("@email", nuevo.Email);
                 datos.setearParametro("@pass", nuevo.Pass);
-                return datos.ejecutarAccionScalar();
+                datos.ejecutarAccion();
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace Negocio
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("Select id, email, pass, admin, imagenPerfil, nombre, apellido, fechaNacimiento from users Where email = @email AND pass = @pass;");
+                datos.setearConsulta("Select id, email, pass, admin, urlImagenPerfil, nombre, apellido from users Where email = @email AND pass = @pass;");
                 datos.setearParametro("@email", trainee.Email);
                 datos.setearParametro("@pass", trainee.Pass);
                 datos.ejecutarLectura();
@@ -75,14 +75,12 @@ namespace Negocio
                 {
                     trainee.Id = (int)datos.Lector["id"];
                     trainee.Admin = (bool)datos.Lector["admin"];
-                    if (!(datos.Lector["imagenPerfil"] is DBNull))
-                        trainee.ImagenPerfil = (string)datos.Lector["imagenPerfil"];
+                    if (!(datos.Lector["urlImagenPerfil"] is DBNull))
+                        trainee.ImagenPerfil = (string)datos.Lector["urlImagenPerfil"];
                     if (!(datos.Lector["nombre"] is DBNull))
                         trainee.Nombre = (string)datos.Lector["nombre"];
                     if (!(datos.Lector["apellido"] is DBNull))
                         trainee.Apellido = (string)datos.Lector["apellido"];
-                    if (!(datos.Lector["fechaNacimiento"] is DBNull))
-                        trainee.FechaNacimiento = DateTime.Parse(datos.Lector["fechaNacimiento"].ToString());
                     return true;
                 }
                 else

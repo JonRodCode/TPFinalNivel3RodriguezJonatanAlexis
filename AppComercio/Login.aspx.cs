@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Dominio;
+using helper;
+using Negocio;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +15,33 @@ namespace AppComercio
         protected void Page_Load(object sender, EventArgs e)
         {
 
+        }
+
+        protected void btnIngresar_Click(object sender, EventArgs e)
+        {
+            Trainee trainee = new Trainee();
+            NegocioTrainee negocio = new NegocioTrainee();
+
+            try
+            {
+                trainee.Email = txtEmail.Text;
+                trainee.Pass = txtPassword.Text;
+                if (negocio.Login(trainee))
+                {
+                    Session.Add("trainee", trainee);
+                    Response.Redirect("MiPerfil.aspx", false);
+                }
+                else
+                {
+                    Session.Add("error", "User o Pass incorrectos");
+                    Response.Redirect("Error.aspx", false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Session.Add("Error", ex);
+                Response.Redirect(Excepciones.paginaError(ex),false);
+            }
         }
     }
 }

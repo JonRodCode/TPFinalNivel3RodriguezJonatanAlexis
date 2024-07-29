@@ -10,17 +10,13 @@ namespace Dominio
     public class Articulo
     {
         public int Id { get; set; }
-
-        [DisplayName("Código")]
         public string Codigo { get; set; }
         public string Nombre { get; set; }
 
-        [DisplayName("Descripción")]
         public string Descripcion { get; set; }
-        public categoria_marca Marca { get; set; }
-        public categoria_marca Categoria { get; set; }
+        public Categoria_marca Marca { get; set; }
+        public Categoria_marca Categoria { get; set; }
 
-        [DisplayName("Url de imagen")]
         public string ImagenUrl { get; set; }
         public decimal Precio { get; set; }
     }
