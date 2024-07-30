@@ -25,7 +25,7 @@ namespace AppComercio
                     txtNombre.Text = trainee.Nombre;
                     txtApellido.Text = trainee.Apellido;
                     if (!(string.IsNullOrEmpty(trainee.ImagenPerfil)))
-                        imgNuevoPerfil.ImageUrl = "~/Imagenes/" + trainee.ImagenPerfil;
+                        imgNuevoPerfil.ImageUrl = "Imagenes/" + trainee.ImagenPerfil + "?v=" + DateTime.Now.Ticks.ToString();
                 }
 
             }
@@ -51,6 +51,7 @@ namespace AppComercio
                     txtImagen.PostedFile.SaveAs(ruta + nombreImagenPerfil);
 
                     user.ImagenPerfil = nombreImagenPerfil;
+                    imgNuevoPerfil.ImageUrl = "Imagenes/" + nombreImagenPerfil + "?v=" + DateTime.Now.Ticks.ToString();
                 }
                 user.Nombre = txtNombre.Text;
                 user.Apellido = txtApellido.Text;

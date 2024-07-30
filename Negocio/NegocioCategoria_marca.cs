@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Negocio
 {
-    internal class NegocioCategoria_marca
+    public class NegocioCategoria_marca
     {
         List<Categoria_marca> lista;
 
