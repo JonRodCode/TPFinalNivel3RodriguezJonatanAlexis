@@ -144,5 +144,13 @@ namespace AppComercio
             txtImagen.Visible = true;
 
         }
+
+        protected void btnRegresar_Click(object sender, EventArgs e)
+        {
+            if (Request.QueryString["from"] is null)
+                Response.Redirect("Default.aspx", false);
+            else
+                Response.Redirect("ArticuloLista.aspx", false);
+        }
     }
 }
