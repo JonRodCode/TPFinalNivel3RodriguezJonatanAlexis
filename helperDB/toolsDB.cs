@@ -18,14 +18,7 @@ namespace helperDB
             datos.setearParametro("@Nombre", articulo.Nombre);
             datos.setearParametro("@Descripcion", articulo.Descripcion);
             datos.setearParametro("@IdMarca", articulo.Marca.Id.ToString());
-
-
-            if (!(articulo.Categoria is null))
-                datos.setearParametro("@IdCategoria", articulo.Categoria.Id.ToString());
-            else
-                datos.setearParametro("@IdCategoria", "");
-
-
+            datos.setearParametro("@IdCategoria", articulo.Categoria.Id.ToString());
             datos.setearParametro("@ImagenUrl", articulo.ImagenUrl);
             datos.setearParametro("@Precio", articulo.Precio);
 

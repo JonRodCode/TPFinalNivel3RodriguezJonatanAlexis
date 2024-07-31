@@ -20,12 +20,15 @@ namespace AppComercio
             {
                 if (!IsPostBack)
                 {
-                    trainee = (Trainee)Session["trainee"];
-                    txtEmail.Text = trainee.Email;
-                    txtNombre.Text = trainee.Nombre;
-                    txtApellido.Text = trainee.Apellido;
-                    if (!(string.IsNullOrEmpty(trainee.ImagenPerfil)))
-                        imgNuevoPerfil.ImageUrl = "Imagenes/" + trainee.ImagenPerfil + "?v=" + DateTime.Now.Ticks.ToString();
+                    if (Seguridad.sessionActiva(Session["trainee"]))
+                    {
+                        trainee = (Trainee)Session["trainee"];
+                        txtEmail.Text = trainee.Email;
+                        txtNombre.Text = trainee.Nombre;
+                        txtApellido.Text = trainee.Apellido;
+                        if (!(string.IsNullOrEmpty(trainee.ImagenPerfil)))
+                            imgNuevoPerfil.ImageUrl = "Imagenes/" + trainee.ImagenPerfil + "?v=" + DateTime.Now.Ticks.ToString();
+                    }
                 }
 
             }

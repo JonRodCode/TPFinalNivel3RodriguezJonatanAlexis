@@ -14,7 +14,7 @@ namespace Negocio
     {
         toolsDB toolDB = new toolsDB();
 
-        public string consultaLectura = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A left join CATEGORIAS C ON A.IdCategoria = C.Id left join MARCAS M ON A.IdMarca = M.Id ";
+        public string consultaLectura = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A inner join CATEGORIAS C ON A.IdCategoria = C.Id inner join MARCAS M ON A.IdMarca = M.Id ";
         public List<Articulo> lista_articulos;
 
         public List<Articulo> listar(string id = "")
@@ -81,7 +81,7 @@ namespace Negocio
             lista_articulos = new List<Articulo>();
             try
             {
-                string consulta = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A left join CATEGORIAS C ON A.IdCategoria = C.Id left join MARCAS M ON A.IdMarca = M.Id Where ";
+                string consulta = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A inner join CATEGORIAS C ON A.IdCategoria = C.Id inner join MARCAS M ON A.IdMarca = M.Id Where ";
                 if (campo == "Precio")
                 {
                     switch (criterio)
@@ -250,7 +250,7 @@ namespace Negocio
 
         }
 
-        public void eliminarArticuloParaSiempre(Articulo eliminado)
+        public void eliminarArticuloParaSiempre(string id)
 
         //Elimina permanentemente 1 articulo de la DB (Eliminacion fisica)
         {
@@ -259,7 +259,7 @@ namespace Negocio
             try
             {
                 consulta = "delete From ARTICULOS where id = @Id";
-                datos.setearParametro("@Id", eliminado.Id);
+                datos.setearParametro("@Id", id);
                 datos.setearConsulta(consulta);
                 datos.ejecutarAccion();
             }
@@ -270,28 +270,66 @@ namespace Negocio
             }
             finally { datos.cerrarConexion(); }
         }
-        public void eliminarArticulosParaSiempre(List<Articulo> listaEliminados)
 
-        //Elimina permanentemente mas de 1 articulo de la DB (Eliminacion fisica)
+        public List<Articulo> listarFavoritos(int id)
         {
-            foreach (Articulo art in listaEliminados)
-            {
-                eliminarArticuloParaSiempre(art);
-            }
-        }
-        public void eliminarArticulo(Articulo eliminado)
-
-        //Elimina 1 articulo (Eliminacion logica)
-        {
+            lista_articulos = new List<Articulo>();
             AccesoDatos datos = new AccesoDatos();
-            string consulta;
-            string codigo;
+            string consulta = "select A.Id, Codigo, A.Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A inner join CATEGORIAS C ON A.IdCategoria = C.Id inner join MARCAS M ON A.IdMarca = M.Id inner join FAVORITOS F On A.id = F.IdArticulo inner join USERS U On F.IdUser = U.Id Where U.id = @id";
+
             try
             {
-                codigo = eliminado.Codigo + " /oculto\\";
-                consulta = "update ARTICULOS set codigo = @Codigo where id = @Id";
-                datos.setearParametro("@Codigo", codigo);
-                datos.setearParametro("@Id", eliminado.Id.ToString());
+                datos.setearParametro("@id", id);
+                datos.setearConsulta(consulta);
+                datos.ejecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    Articulo articulo = new Articulo();
+                    articulo.Id = (int)datos.Lector["Id"];
+                    articulo.Codigo = (string)datos.Lector["Codigo"];
+                    articulo.Nombre = (string)datos.Lector["Nombre"];
+
+                    articulo.Descripcion = (string)datos.Lector["Descripcion"];
+
+
+                    Categoria_marca marca = new Categoria_marca();
+                    marca.Id = (int)datos.Lector["IdMarca"];
+                    marca.Descripcion = (string)datos.Lector["Marca"];
+                    articulo.Marca = marca;
+
+                    Categoria_marca categoria = new Categoria_marca();
+                    categoria.Id = (int)datos.Lector["IdCategoria"];
+                    categoria.Descripcion = (string)datos.Lector["Categoria"];
+                    articulo.Categoria = categoria;
+
+                    articulo.ImagenUrl = (string)datos.Lector["ImagenUrl"];
+
+                    articulo.Precio = (decimal)datos.Lector["Precio"];
+
+                    lista_articulos.Add(articulo);
+                }
+
+                return lista_articulos;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public void agregarFavorito(string idTrainee, string idArticulo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                string consulta = "insert into FAVORITOS(IdUser, IdArticulo) values(@idUser, @idArticulo)";
+                datos.setearParametro("@idUser", idTrainee);
+                datos.setearParametro("@idArticulo", idArticulo);
                 datos.setearConsulta(consulta);
                 datos.ejecutarAccion();
             }
@@ -302,47 +340,50 @@ namespace Negocio
             }
             finally { datos.cerrarConexion(); }
         }
-        public void eliminarArticulos(List<Articulo> listaEliminados)
 
-        //Elimina mas de 1 articulo (Eliminacion logica)
+        public bool estaEnFavoritos(string idTrainee, string idArticulo)
         {
-            foreach (Articulo art in listaEliminados)
-            {
-                eliminarArticulo(art);
-            }
-        }
-
-        public void restaurarArticulo(Articulo restaurado)
-
-        //  Restaura 1 articulo seleccionado (devuelve a la lista Principal)
-        {
+            List<int> lista = new List<int>();
             AccesoDatos datos = new AccesoDatos();
             string consulta;
             try
             {
-                restaurado.Codigo = restaurado.Codigo.Replace(" /oculto\\", "");
-                consulta = consulta = "update ARTICULOS set Codigo = @Codigo where id = @Id";
-                datos.setearParametro("@Codigo", restaurado.Codigo);
-                datos.setearParametro("@Id", restaurado.Id);
+                consulta = "select * From FAVORITOS where IdArticulo = @idArticulo and IdUser = @idUser";
+                datos.setearParametro("@idArticulo", idArticulo);
+                datos.setearParametro("@idUser", idTrainee);
+                datos.setearConsulta(consulta);
+                datos.ejecutarLectura();
+                if (datos.Lector.Read())
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally { datos.cerrarConexion(); }
+
+        }
+
+        public void quitarFavorito(string idTrainee, string idArticulo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                string consulta = "delete From FAVORITOS where IdUser = @idUser and IdArticulo = @idArticulo";
+                datos.setearParametro("@idUser", idTrainee);
+                datos.setearParametro("@idArticulo", idArticulo);
                 datos.setearConsulta(consulta);
                 datos.ejecutarAccion();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
             finally { datos.cerrarConexion(); }
-        }
-
-        public void restaurarArticulos(List<Articulo> listaRestaurados)
-
-        //  Restaura los articulos seleccionados (devuelve a la lista Principal)
-        {
-            foreach (Articulo art in listaRestaurados)
-            {
-                restaurarArticulo(art);
-            }
         }
     }
 }

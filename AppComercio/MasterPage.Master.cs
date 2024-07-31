@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dominio;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,7 +12,17 @@ namespace AppComercio
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (Session["trainee"] is null)
+            {
+                if (Page is Favoritos || Page is MiPerfil)
+                    Response.Redirect("Login.aspx", false);
+            }
+            else
+            {
+                Trainee user = (Trainee)Session["trainee"];
+                if (!string.IsNullOrEmpty(user.ImagenPerfil))
+                    imgAvatar.ImageUrl = "~/Imagenes/" + user.ImagenPerfil;
+            }
         }
 
         protected void btnSalir_Click(object sender, EventArgs e)

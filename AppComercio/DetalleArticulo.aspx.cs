@@ -13,6 +13,8 @@ namespace AppComercio
     public partial class DetalleArticulo : System.Web.UI.Page
     {
         public Trainee trainee { get; set; }
+        public bool ConfirmaEliminacion { get; set; }
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -44,9 +46,8 @@ namespace AppComercio
                         NegocioArticulo negocio = new NegocioArticulo();
                         articulo = negocio.listar(Request.QueryString["id"].ToString())[0];
 
-                        imgArticulo.ImageUrl = articulo.ImagenUrl + "?v=" + DateTime.Now.Ticks.ToString(); 
+                        imgArticulo.ImageUrl = articulo.ImagenUrl + "?v=" + DateTime.Now.Ticks.ToString();
                         txtUrlImagen.Text = articulo.ImagenUrl;
-                        txtUrlImagen.Visible = false;
                         txtCodigo.Text = articulo.Codigo;
                         txtNombre.Text = articulo.Nombre;
                         txtPrecio.Text = articulo.Precio.ToString();
@@ -55,6 +56,9 @@ namespace AppComercio
                         ddlCategoria.SelectedValue = articulo.Categoria.Id.ToString();
 
                         txtDescripcion.Text = articulo.Descripcion;
+
+                        if (!(trainee is null) && (negocio.estaEnFavoritos(trainee.Id.ToString(), articulo.Id.ToString())))
+                            btnAFavoritos.Text = "Quitar de favoritos";
                     }
                     // Habilitamos los elementos para el Admin
                     if (!(trainee is null) && trainee.Admin)
@@ -77,6 +81,26 @@ namespace AppComercio
 
         protected void btnAFavoritos_Click(object sender, EventArgs e)
         {
+            try
+            {
+                NegocioArticulo negocio = new NegocioArticulo();
+                if (!negocio.estaEnFavoritos(trainee.Id.ToString(), Request.QueryString["id"].ToString()))
+                {
+                    negocio.agregarFavorito(trainee.Id.ToString(), Request.QueryString["id"]);
+                    btnAFavoritos.Text = "Quitar de favoritos";
+                }
+                else
+                {
+                    negocio.quitarFavorito(trainee.Id.ToString(), Request.QueryString["id"]);
+                    btnAFavoritos.Text = "Agregar de favoritos";
+                }
+            }
+            catch (Exception ex)
+            {
+                Session.Add("Error", ex);
+                Response.Redirect(Excepciones.paginaError(ex), false);
+            }
+
 
         }
 
@@ -89,7 +113,7 @@ namespace AppComercio
                 if (!(Request.QueryString["id"] is null))
                     articulo.Id = int.Parse(Request.QueryString["id"]);
 
-                if (txtImagen.Visible && (txtImagen.PostedFile.FileName != ""))
+                if (txtImagen.Visible && (!(string.IsNullOrEmpty(txtImagen.PostedFile.FileName))))
                 {
                     string ruta = Server.MapPath("./Imagenes/");
                     string nombreImagenArticulo = "articulo-" + articulo.Id.ToString() + ".jpg";
@@ -116,7 +140,7 @@ namespace AppComercio
 
                 articulo.Descripcion = txtDescripcion.Text;
 
-                if (string.IsNullOrEmpty(articulo.Id.ToString()))
+                if (articulo.Id == 0)
                     negocio.agregarArticulo(articulo);
                 else
                     negocio.modificarArticulo(articulo);
@@ -139,7 +163,7 @@ namespace AppComercio
 
         protected void btnArchivoImagen_Click(object sender, EventArgs e)
         {
-            
+
             txtUrlImagen.Visible = false;
             txtImagen.Visible = true;
 
@@ -147,10 +171,36 @@ namespace AppComercio
 
         protected void btnRegresar_Click(object sender, EventArgs e)
         {
-            if (Request.QueryString["from"] is null)
-                Response.Redirect("Default.aspx", false);
-            else
+            if (Request.QueryString["from"] == "AL")
                 Response.Redirect("ArticuloLista.aspx", false);
+            else if (Request.QueryString["from"] == "F")
+                Response.Redirect("Favoritos.aspx", false);
+            else
+                Response.Redirect("Default.aspx", false);
+        }
+
+        protected void btnEliminar_Click(object sender, EventArgs e)
+        {
+            ConfirmaEliminacion = true;
+        }
+
+        protected void btnEliminarConfirmacion_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (chkConfirmarEliminacion.Checked)
+                {
+                    NegocioArticulo negocio = new NegocioArticulo();
+                    negocio.eliminarArticuloParaSiempre(Request.QueryString["id"].ToString());
+                    btnRegresar_Click(sender, e);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Session.Add("Error", ex);
+                Response.Redirect(Excepciones.paginaError(ex), false);
+            }
         }
     }
 }

@@ -76,6 +76,6 @@
     </asp:GridView>
     <% if (!(trainee is null) && trainee.Admin)
         { %>
-    <a href="DetalleArticulo.aspx" class="btn btn-primary">Agregar</a>
+    <asp:Button ID="btnAgregarArticulo" CssClass="btn btn-primary" runat="server" Text="Agregar articulo" OnClick="btnAgregarArticulo_Click" />
     <% }%>
 </asp:Content>

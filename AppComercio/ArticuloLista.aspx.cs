@@ -127,5 +127,10 @@ namespace AppComercio
             dgvArticulos.PageIndex = e.NewPageIndex;
             dgvArticulos.DataBind();
         }
+
+        protected void btnAgregarArticulo_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("DetalleArticulo.aspx?from=AL", false);
+        }
     }
 }
