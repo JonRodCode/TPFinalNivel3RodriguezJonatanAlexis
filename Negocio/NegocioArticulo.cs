@@ -82,8 +82,12 @@ namespace Negocio
             try
             {
                 string consulta = "select A.Id, Codigo, Nombre, A.Descripcion, M.Descripcion as Marca, C.Descripcion as Categoria, ImagenUrl, Precio, IdMarca, IdCategoria from ARTICULOS A inner join CATEGORIAS C ON A.IdCategoria = C.Id inner join MARCAS M ON A.IdMarca = M.Id Where ";
+              
                 if (campo == "Precio")
                 {
+                    if (filtro.Contains(","))
+                        filtro.Replace(",", ".");
+
                     switch (criterio)
                     {
                         case "Mayor a":
@@ -101,7 +105,7 @@ namespace Negocio
                 {
                     switch (criterio)
                     {
-                        case "Comienza con":
+                        case "Empieza con":
                             consulta += "Nombre like '" + filtro + "%' ";
                             break;
                         case "Termina con":
@@ -116,7 +120,7 @@ namespace Negocio
                 {
                     switch (criterio)
                     {
-                        case "Comienza con":
+                        case "Empieza con":
                             consulta += "Codigo like '" + filtro + "%' ";
                             break;
                         case "Termina con":
@@ -131,7 +135,7 @@ namespace Negocio
                 {
                     switch (criterio)
                     {
-                        case "Comienza con":
+                        case "Empieza con":
                             consulta += "M.Descripcion like '" + filtro + "%' ";
                             break;
                         case "Termina con":
@@ -146,7 +150,7 @@ namespace Negocio
                 {
                     switch (criterio)
                     {
-                        case "Comienza con":
+                        case "Empieza con":
                             consulta += "C.Descripcion like '" + filtro + "%' ";
                             break;
                         case "Termina con":
@@ -157,6 +161,7 @@ namespace Negocio
                             break;
                     }
                 }
+
 
                 datos.setearConsulta(consulta);
                 datos.ejecutarLectura();
@@ -199,7 +204,7 @@ namespace Negocio
             }
         }
 
-        public void agregarArticulo(Articulo nuevo)
+        public int agregarArticulo(Articulo nuevo)
 
         // Agrega un nuevo articulo a la base de datos
         {
@@ -212,6 +217,35 @@ namespace Negocio
 
                 datos.setearConsulta(consulta);
                 datos.ejecutarAccion();
+                datos.cerrarConexion();
+
+                return ultimoArticulo();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public int ultimoArticulo()
+        {
+            AccesoDatos datos = new AccesoDatos();
+            int id = 0;
+            try
+            {
+                string consulta = "select max(id) idMax from articulos";
+                datos.setearConsulta(consulta);
+                datos.ejecutarLectura();
+                while (datos.Lector.Read())
+                {
+                    id = (int)datos.Lector["idMax"];
+                }
+                return id;
             }
             catch (Exception ex)
             {

@@ -3,7 +3,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <h2>Hola!</h2>
+    <h2>Home</h2>
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <asp:Repeater ID="repHome" runat="server">
             <ItemTemplate>

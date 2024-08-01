@@ -11,7 +11,12 @@ namespace AppComercio
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            lblError.Text = Session["Error"].ToString();
+            if (Request.QueryString["error"] == "registro")
+                lblError.Text = "El email ya se encuentra registrado.";
+            else if (!(Session["Error"] is null))
+                lblError.Text = Session["Error"].ToString();
+            else
+                Response.Redirect("default.aspx", false);
         }
     }
 }

@@ -21,23 +21,31 @@ namespace AppComercio
         {
             try
             {
+                if (!(Page.IsValid))
+                    return;
+
                 Trainee user = new Trainee();
                 NegocioTrainee negocio = new NegocioTrainee();
-
                 user.Email = txtEmail.Text;
                 user.Pass = txtPassword.Text;
-                negocio.insertarNuevo(user);
-                negocio.Login(user);
-                Session.Add("trainee", user);
 
-                Response.Redirect("Default.aspx", false);
+                if (!negocio.estaRegistrado(user))
+                {
+                    negocio.insertarNuevo(user);
+                    negocio.Login(user);
+                    Session.Add("trainee", user);
+
+                    Response.Redirect("Default.aspx", false);
+                }
+                else
+                    Response.Redirect("Error.aspx?error=registro", false);
 
             }
             catch (Exception ex)
             {
 
                 Session.Add("Error", ex);
-                Response.Redirect(Excepciones.paginaError(ex),false);
+                Response.Redirect(Excepciones.paginaError(ex), false);
             }
         }
     }

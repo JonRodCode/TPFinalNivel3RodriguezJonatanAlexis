@@ -54,7 +54,6 @@ namespace AppComercio
 
                         ddlMarca.SelectedValue = articulo.Marca.Id.ToString();
                         ddlCategoria.SelectedValue = articulo.Categoria.Id.ToString();
-
                         txtDescripcion.Text = articulo.Descripcion;
 
                         if (!(trainee is null) && (negocio.estaEnFavoritos(trainee.Id.ToString(), articulo.Id.ToString())))
@@ -69,6 +68,7 @@ namespace AppComercio
                         ddlMarca.Enabled = true;
                         ddlCategoria.Enabled = true;
                         txtDescripcion.Enabled = true;
+                        txtImagen.Visible = false;
                     }
                 }
             }
@@ -106,10 +106,15 @@ namespace AppComercio
 
         protected void btnGuardar_Click(object sender, EventArgs e)
         {
+
+            if (!(Page.IsValid))
+                return;
+
             NegocioArticulo negocio = new NegocioArticulo();
             Articulo articulo = new Articulo();
             try
             {
+
                 if (!(Request.QueryString["id"] is null))
                     articulo.Id = int.Parse(Request.QueryString["id"]);
 
@@ -141,7 +146,10 @@ namespace AppComercio
                 articulo.Descripcion = txtDescripcion.Text;
 
                 if (articulo.Id == 0)
-                    negocio.agregarArticulo(articulo);
+                {
+                    int id = negocio.agregarArticulo(articulo);
+                    Response.Redirect("DetalleArticulo.aspx?from=" + Request.QueryString["from"].ToString()+"&id="+id, false);
+                }
                 else
                     negocio.modificarArticulo(articulo);
 
@@ -163,7 +171,6 @@ namespace AppComercio
 
         protected void btnArchivoImagen_Click(object sender, EventArgs e)
         {
-
             txtUrlImagen.Visible = false;
             txtImagen.Visible = true;
 

@@ -87,6 +87,15 @@ namespace AppComercio
         protected global::System.Web.UI.WebControls.Label lblFiltro;
 
         /// <summary>
+        /// rfvFiltro control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvFiltro;
+
+        /// <summary>
         /// txtFiltroAvanzado control.
         /// </summary>
         /// <remarks>
@@ -94,6 +103,15 @@ namespace AppComercio
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtFiltroAvanzado;
+
+        /// <summary>
+        /// revPrecio control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator revPrecio;
 
         /// <summary>
         /// btnBuscar control.

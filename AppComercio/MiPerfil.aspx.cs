@@ -18,6 +18,7 @@ namespace AppComercio
             Trainee trainee = new Trainee();
             try
             {
+                txtEmail.Enabled = false;
                 if (!IsPostBack)
                 {
                     if (Seguridad.sessionActiva(Session["trainee"]))

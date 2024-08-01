@@ -5,6 +5,11 @@
         .oculto {
             display: none;
         }
+
+        .validacion {
+            color: red;
+            font-size: 14px
+        }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -46,13 +51,16 @@
         <div class="col-3">
             <div class="mb-3">
                 <asp:Label ID="lblFiltro" runat="server" Text="Filtro"></asp:Label>
+                <asp:RequiredFieldValidator ID="rfvFiltro" runat="server" ValidationGroup="Group1" ErrorMessage="Campo requerido." CssClass="validacion" ControlToValidate="txtFiltroAvanzado"></asp:RequiredFieldValidator>
                 <asp:TextBox ID="txtFiltroAvanzado" runat="server" CssClass="form-control"></asp:TextBox>
+                <asp:RegularExpressionValidator Enabled="false" ID="revPrecio" ValidationGroup="Group1" ErrorMessage="Ingrese un valor válido." CssClass="validacion" ControlToValidate="txtFiltroAvanzado" ValidationExpression="^\d{1,5}([\,\.]\d{1,4})?$" runat="server" />
+               
             </div>
         </div>
         <div class="col-3">
             <div class="mb-4"></div>
             <div class="mb-3">
-                <asp:Button ID="btnBuscar" runat="server" Text="Buscar" CssClass="btn btn-primary" OnClick="btnBuscar_Click" />
+                <asp:Button ID="btnBuscar" ValidationGroup="Group1" runat="server" Text="Buscar" CssClass="btn btn-primary" OnClick="btnBuscar_Click" />
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Collections.Specialized.BitVector32;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace helper
 {
@@ -16,5 +17,14 @@ namespace helper
         {
             return errorEstandar;
         }
+
+        public static void validatorsDetalles(bool estado, RequiredFieldValidator n1, RequiredFieldValidator n2, RequiredFieldValidator n3, RegularExpressionValidator n4)
+        {
+            n1.Enabled = estado;
+            n2.Enabled = estado;
+            n3.Enabled = estado;
+            n4.Enabled = estado;
+        }
+            
     }
 }

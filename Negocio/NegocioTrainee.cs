@@ -10,6 +10,29 @@ namespace Negocio
 {
     public class NegocioTrainee
     {
+        public bool estaRegistrado(Trainee user)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("select email from users where email = @email");
+                datos.setearParametro("@email", user.Email);
+                datos.ejecutarLectura();
+                if (datos.Lector.Read())
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
         public void actualizar(Trainee user)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -34,11 +57,6 @@ namespace Negocio
                 datos.cerrarConexion();
             }
         }
-
-        //id
-        //email
-        //pass
-        //admin false
 
         public void insertarNuevo(Trainee nuevo)
         {

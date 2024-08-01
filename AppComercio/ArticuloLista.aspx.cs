@@ -19,9 +19,9 @@ namespace AppComercio
             try
             {
                 trainee = (Trainee)Session["trainee"];
+                FiltroAvanzado = chkFiltroAvanzado.Checked;
                 if (!IsPostBack)
                 {
-                    FiltroAvanzado = chkFiltroAvanzado.Checked;
                     NegocioArticulo negocio = new NegocioArticulo();
                     Session.Add("listaArticulos", negocio.listar());
                     dgvArticulos.DataSource = Session["listaArticulos"];
@@ -62,9 +62,13 @@ namespace AppComercio
                 dgvArticulos.DataSource = Session["listaArticulos"];
                 dgvArticulos.DataBind();
                 ddlCampo.Items.Clear();
+                ddlCriterio.Items.Clear();
             }
             else
             {
+                txtFitro.Text = "";
+                dgvArticulos.DataSource = Session["listaArticulos"];
+                dgvArticulos.DataBind();
                 List<string> listaCampo = new List<string>() { "Código", "Nombre", "Marca", "Categoria", "Precio" };
                 foreach (string elem in listaCampo)
                     ddlCampo.Items.Add(elem);
@@ -83,12 +87,14 @@ namespace AppComercio
                 ddlCriterio.Items.Add("Igual a");
                 ddlCriterio.Items.Add("Mayor a");
                 ddlCriterio.Items.Add("Menor a");
+                revPrecio.Enabled = true;
             }
             else
             {
                 ddlCriterio.Items.Add("Empieza con");
                 ddlCriterio.Items.Add("Termina con");
                 ddlCriterio.Items.Add("Contiene");
+                revPrecio.Enabled = false;
             }
         }
 
@@ -96,6 +102,9 @@ namespace AppComercio
         {
             try
             {
+                if (!Page.IsValid)
+                    return;
+
                 NegocioArticulo negocio = new NegocioArticulo();
 
                 Session.Add("listaArticulosActual", negocio.filtrar(

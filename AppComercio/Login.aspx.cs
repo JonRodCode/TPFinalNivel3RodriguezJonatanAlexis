@@ -19,6 +19,9 @@ namespace AppComercio
 
         protected void btnIngresar_Click(object sender, EventArgs e)
         {
+            if (!(Page.IsValid))        
+                return;
+
             Trainee trainee = new Trainee();
             NegocioTrainee negocio = new NegocioTrainee();
 
